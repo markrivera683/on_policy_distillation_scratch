@@ -1,2 +1,9 @@
-# ignore outputs and datasets
+# ignore duplicated file
 .python-version
+
+# ignore outputs and datasets
+**/__pycache__/
+**/*_cahce/
+
+# personalized docs files
+markrivera/*

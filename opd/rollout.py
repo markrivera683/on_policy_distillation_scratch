@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import PreTrainedModel, PreTrainedTokenizerBase
 
 from dataclasses import dataclass, field
 from typing import Any, Sequence
@@ -30,9 +30,9 @@ class GeneratedText:
 @dataclass
 class RolloutGroup:
     prompt_item: PromptItem
-    candidates: list[RolloutCandidate] = field(default_factory=list)
     
     policy_version: str
+    candidates: list[RolloutCandidate] = field(default_factory=list)
     
     meta: dict[str, Any] = field(default_factory=dict)
     
@@ -40,7 +40,7 @@ class RolloutGroup:
 @dataclass
 class RolloutCandidate:
     generated_text: GeneratedText
-    prompt_id: str
+    prompt_id: str | None = None
     candidate_id: str
     
     policy_version: str
@@ -54,20 +54,20 @@ class RolloutResult:
     
 @dataclass
 class RolloutEngineConfig:
-    model: AutoModelForCausalLM
-    tokenizer: AutoTokenizer
-    device: str 
+    model: PreTrainedModel
+    tokenizer: PreTrainedTokenizerBase
+    device: str | None = None
 
 @dataclass
 class RolloutConfig:
     num_n_per_prompt: int
     
     max_new_tokens: int
+    policy_version: str
+    
     do_sample: bool = True
     temperature: float = 1.0
     top_p: float = 0.95
-    
-    policy_version: str
     
     
 class HFRolloutEngine:
